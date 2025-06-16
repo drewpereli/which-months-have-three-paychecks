@@ -8,7 +8,10 @@ Alpine.plugin(mask);
 
 (window as unknown as { Alpine: typeof Alpine }).Alpine = Alpine;
 
-function get3PaycheckMonthsForYear(paycheckDate: Date, year: number): string[] {
+function get3PaycheckMonthsForYear(
+  paycheckDate: Spacetime,
+  year: number,
+): string[] {
   let currPaycheckDate = getFirstPaycheckOfYear(paycheckDate, year);
 
   // Add two weeks and log the number of paychecks in each month
@@ -26,11 +29,14 @@ function get3PaycheckMonthsForYear(paycheckDate: Date, year: number): string[] {
     .map(([month]) => month);
 }
 
-function getFirstPaycheckOfYear(paycheckDate: Date, year: number): Spacetime {
+function getFirstPaycheckOfYear(
+  paycheckDate: Spacetime,
+  year: number,
+): Spacetime {
   const firstDayOfYear = spacetime().year(year).startOf("year");
 
   // We'll calculate the first paycheck of the year by either adding or subtracting two weeks until we are in the year and within two weeks of the first day of the year
-  let firstPaycheckOfYear = spacetime(paycheckDate).startOf("day");
+  let firstPaycheckOfYear = paycheckDate.startOf("day");
 
   while (
     Math.abs(firstPaycheckOfYear.diff(firstDayOfYear, "days")) >= 14 ||
@@ -48,25 +54,35 @@ function getFirstPaycheckOfYear(paycheckDate: Date, year: number): Spacetime {
 
 Alpine.data("app", () => ({
   dateInput: "",
-  get validatedDate() {
-    if (!/^\d\d\/\d\d\/\d{4}$/.test(this.dateInput)) return null;
+  get dateValidation():
+    | { ok: true; date: Spacetime }
+    | { ok: false; errorMessage: string | null } {
+    if (!/^\d\d\/\d\d\/\d{4}$/.test(this.dateInput))
+      return { ok: false, errorMessage: null };
 
-    const date = new Date(this.dateInput);
+    const date = spacetime(this.dateInput);
 
-    if (isNaN(date.getTime())) return null;
+    if (!date.isValid())
+      return { ok: false, errorMessage: "Please enter a valid date" };
 
-    return date;
+    if (Math.abs(date.diff(spacetime(), "years")) > 5) {
+      return {
+        ok: false,
+        errorMessage: "Please enter a date within 5 years of today",
+      };
+    }
+
+    return {
+      ok: true,
+      date,
+    };
   },
   get paycheckData() {
-    const date = this.validatedDate;
+    const dateValidation = this.dateValidation;
 
-    if (!date) return [];
+    if (!dateValidation.ok) return [];
 
-    const currentYear = date.getFullYear();
-
-    if (Math.abs(date.getFullYear() - currentYear) > 2) {
-      return [];
-    }
+    const { date } = dateValidation;
 
     const today = new Date();
 

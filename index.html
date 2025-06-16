@@ -11,6 +11,8 @@
   <main class="p-8 flex flex-col gap-4 items-center justify-center h-screen w-screen" x-data="app">
     <input x-mask="99/99/9999" placeholder="MM/DD/YYYY" x-model="dateInput" />
 
+    <p x-text="dateValidation.errorMessage"></p>
+
     <template x-for="{year, threePaycheckMonths} in paycheckData">
       <div>
         <h4 x-text="year"></h4>
