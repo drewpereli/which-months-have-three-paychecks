@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",
+    "@types/alpinejs": "^3.13.11",
     "eslint": "^9.29.0",
     "globals": "^16.2.0",
     "prettier": "3.5.3",
@@ -21,6 +22,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.10",
+    "alpinejs": "^3.14.9",
     "tailwindcss": "^4.1.10"
   }
 }
