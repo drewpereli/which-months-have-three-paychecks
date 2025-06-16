@@ -1,15 +1,26 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Which months have three paychecks</title>
-  </head>
 
-  <body>
-    <main class="p-8 flex items-center justify-center" x-data="{date: ''}">
-      <input x-mask="99/99/9999" placeholder="MM/DD/YYYY" x-model="date" />
-    </main>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Which months have three paychecks</title>
+</head>
+
+<body>
+  <main class="p-8 flex flex-col gap-4 items-center justify-center h-screen w-screen" x-data="app">
+    <input x-mask="99/99/9999" placeholder="MM/DD/YYYY" x-model="dateInput" />
+
+    <template x-for="{year, threePaycheckMonths} in paycheckData">
+      <div>
+        <h4 x-text="year"></h4>
+        <template x-for="month in threePaycheckMonths">
+          <div x-text="month"></div>
+        </template>
+      </div>
+    </template>
+  </main>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
 </html>
