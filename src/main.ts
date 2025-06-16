@@ -8,6 +8,49 @@ Alpine.plugin(mask);
 
 (window as unknown as { Alpine: typeof Alpine }).Alpine = Alpine;
 
+Alpine.data("app", () => ({
+  dateInput: "",
+  get dateValidation():
+    | { ok: true; date: Spacetime }
+    | { ok: false; errorMessage: string | null } {
+    if (!/^\d\d\/\d\d\/\d{4}$/.test(this.dateInput))
+      return { ok: false, errorMessage: null };
+
+    const date = spacetime(this.dateInput);
+
+    if (!date.isValid())
+      return { ok: false, errorMessage: "Please enter a valid date" };
+
+    if (Math.abs(date.diff(spacetime(), "years")) > 5) {
+      return {
+        ok: false,
+        errorMessage: "Please enter a date within 5 years of today",
+      };
+    }
+
+    return {
+      ok: true,
+      date,
+    };
+  },
+  get paycheckData() {
+    const dateValidation = this.dateValidation;
+
+    if (!dateValidation.ok) return [];
+
+    const { date } = dateValidation;
+
+    const today = new Date();
+
+    const years = [today.getFullYear(), today.getFullYear() + 1];
+
+    return years.map((year) => ({
+      year,
+      threePaycheckMonths: get3PaycheckMonthsForYear(date, year),
+    }));
+  },
+}));
+
 function get3PaycheckMonthsForYear(
   paycheckDate: Spacetime,
   year: number,
@@ -51,48 +94,5 @@ function getFirstPaycheckOfYear(
 
   return firstPaycheckOfYear;
 }
-
-Alpine.data("app", () => ({
-  dateInput: "",
-  get dateValidation():
-    | { ok: true; date: Spacetime }
-    | { ok: false; errorMessage: string | null } {
-    if (!/^\d\d\/\d\d\/\d{4}$/.test(this.dateInput))
-      return { ok: false, errorMessage: null };
-
-    const date = spacetime(this.dateInput);
-
-    if (!date.isValid())
-      return { ok: false, errorMessage: "Please enter a valid date" };
-
-    if (Math.abs(date.diff(spacetime(), "years")) > 5) {
-      return {
-        ok: false,
-        errorMessage: "Please enter a date within 5 years of today",
-      };
-    }
-
-    return {
-      ok: true,
-      date,
-    };
-  },
-  get paycheckData() {
-    const dateValidation = this.dateValidation;
-
-    if (!dateValidation.ok) return [];
-
-    const { date } = dateValidation;
-
-    const today = new Date();
-
-    const years = [today.getFullYear(), today.getFullYear() + 1];
-
-    return years.map((year) => ({
-      year,
-      threePaycheckMonths: get3PaycheckMonthsForYear(date, year),
-    }));
-  },
-}));
 
 Alpine.start();
