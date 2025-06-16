@@ -9,11 +9,15 @@
 
 <body>
   <main
-    class="p-8 pt-[30vh] flex items-start justify-center h-screen w-screen bg-black text-gray-100 font-light text-4xl"
+    class="p-8 pt-[20vh] flex items-start justify-center h-screen w-screen bg-black text-gray-100 font-light text-4xl"
     x-data="app">
-    <div class="w-full max-w-sm flex flex-col gap-8">
-      <input x-mask="99/99/9999" placeholder="MM/DD/YYYY" x-model="dateInput"
-        class="w-full outline-2 outline-slate-500 px-2 py-1 rounded-sm focus:outline-indigo-400" />
+    <div class="w-full max-w-3xl flex flex-col gap-12">
+      <h1 class="md:text-5xl">Which months have three paychecks?</h1>
+      <label class="space-y-4">
+        <div class="text-xl text-gray-300">Enter the date of a recent paycheck</div>
+        <input x-mask="99/99/9999" placeholder="MM/DD/YYYY" x-model="dateInput"
+          class="w-full outline-2 outline-slate-500 px-2 py-1 rounded-sm focus:outline-indigo-400 bg-gray-900 text-white text-3xl" />
+      </label>
 
       <template x-if="!dateValidation.ok">
         <p x-text="dateValidation.errorMessage" class="text-red-300"></p>
