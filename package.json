@@ -25,6 +25,7 @@
     "@alpinejs/mask": "^3.14.9",
     "@tailwindcss/vite": "^4.1.10",
     "alpinejs": "^3.14.9",
+    "spacetime": "^7.10.0",
     "tailwindcss": "^4.1.10"
   }
 }
