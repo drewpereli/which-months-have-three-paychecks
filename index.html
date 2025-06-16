@@ -1,46 +1,48 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Which months have three paychecks</title>
-  </head>
 
-  <body>
-    <main
-      class="p-8 pt-[20vh] flex items-start justify-center h-screen w-screen bg-black text-gray-100 font-light text-4xl"
-      x-data="app"
-    >
-      <div class="w-full max-w-3xl flex flex-col gap-12">
-        <h1 class="md:text-5xl">Which months have three paychecks?</h1>
-        <label class="space-y-4">
-          <div class="text-xl text-gray-300">
-            Enter the date of a recent paycheck
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Which months have three paychecks</title>
+</head>
+
+<body>
+  <main
+    class="p-8 pt-[20vh] flex items-start justify-center h-screen w-screen bg-black text-gray-100 font-light text-4xl"
+    x-data="app">
+    <a href="https://www.buymeacoffee.com/padre.hoyt" target="_blank" class="absolute top-2 right-2">
+      <img src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" alt="Buy Me A Coffee"
+        style="height: 40px !important;width: 145px !important;">
+    </a>
+
+    <div class="w-full max-w-3xl flex flex-col gap-12">
+      <h1 class="md:text-5xl">Which months have three paychecks?</h1>
+      <label class="space-y-4">
+        <div class="text-xl text-gray-300">
+          Enter the date of a recent paycheck
+        </div>
+        <input x-mask="99/99/9999" placeholder="MM/DD/YYYY" x-model="dateInput"
+          class="w-full outline-2 outline-slate-500 px-2 py-1 rounded-sm focus:outline-indigo-400 bg-gray-900 text-white text-3xl" />
+      </label>
+
+      <template x-if="!dateValidation.ok">
+        <p x-text="dateValidation.errorMessage" class="text-red-300"></p>
+      </template>
+
+      <template x-for="{year, threePaycheckMonths} in paycheckData">
+        <div class="flex border-l border-slate-300 pl-2 gap-4">
+          <h4 x-text="year" class="font-medium text-3xl mt-1"></h4>
+          <div class="flex flex-col gap-2">
+            <template x-for="month in threePaycheckMonths">
+              <div x-text="month" class="capitalize"></div>
+            </template>
           </div>
-          <input
-            x-mask="99/99/9999"
-            placeholder="MM/DD/YYYY"
-            x-model="dateInput"
-            class="w-full outline-2 outline-slate-500 px-2 py-1 rounded-sm focus:outline-indigo-400 bg-gray-900 text-white text-3xl"
-          />
-        </label>
+        </div>
+      </template>
+    </div>
+  </main>
+  <script type="module" src="/src/main.ts"></script>
+</body>
 
-        <template x-if="!dateValidation.ok">
-          <p x-text="dateValidation.errorMessage" class="text-red-300"></p>
-        </template>
-
-        <template x-for="{year, threePaycheckMonths} in paycheckData">
-          <div class="flex border-l border-slate-300 pl-2 gap-4">
-            <h4 x-text="year" class="font-medium text-3xl mt-1"></h4>
-            <div class="flex flex-col gap-2">
-              <template x-for="month in threePaycheckMonths">
-                <div x-text="month" class="capitalize"></div>
-              </template>
-            </div>
-          </div>
-        </template>
-      </div>
-    </main>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
 </html>
