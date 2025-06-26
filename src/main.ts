@@ -8,15 +8,86 @@ Alpine.plugin(mask);
 
 (window as unknown as { Alpine: typeof Alpine }).Alpine = Alpine;
 
+type Input = {
+  el: HTMLInputElement | null;
+  value: string;
+  id: string;
+  placeholder: string;
+  min?: number;
+  max?: number;
+  width: string;
+  isValid: boolean;
+};
+
+const inputs: Input[] = [
+  {
+    id: "month",
+    placeholder: "M",
+    min: 1,
+    max: 12,
+    width: "2.5em",
+    el: null as HTMLInputElement | null,
+    value: "",
+    get isValid() {
+      if (this.value.length < 1) return true; // Allow empty input
+      const month = parseInt(this.value);
+      return !isNaN(month) && month >= 1 && month <= 12;
+    },
+  },
+  {
+    id: "day",
+    placeholder: "D",
+    min: 1,
+    max: 31,
+    width: "2.5em",
+    el: null as HTMLInputElement | null,
+    value: "",
+    get isValid() {
+      if (this.value.length < 1) return true; // Allow empty input
+      const day = parseInt(this.value);
+      return !isNaN(day) && day >= 1 && day <= 31;
+    },
+  },
+  {
+    id: "year",
+    placeholder: "Y",
+    width: "4.5em",
+    el: null as HTMLInputElement | null,
+    value: "",
+    get isValid() {
+      if (this.value.length < 3) return true; // Allow empty input
+      const year = parseInt(this.value);
+      return !isNaN(year);
+    },
+  },
+];
+
 Alpine.data("app", () => ({
-  dateInput: "",
+  inputs,
   get dateValidation():
     | { ok: true; date: Spacetime }
     | { ok: false; errorMessage: string | null } {
-    if (!/^\d\d\/\d\d\/\d{4}$/.test(this.dateInput))
-      return { ok: false, errorMessage: null };
+    const dayInput = this.inputs.find((input) => input.id === "day")!;
+    const monthInput = this.inputs.find((input) => input.id === "month")!;
+    const yearInput = this.inputs.find((input) => input.id === "year")!;
 
-    const date = spacetime(this.dateInput);
+    if (
+      dayInput.value.length < 1 ||
+      monthInput.value.length < 1 ||
+      yearInput.value.length < 4
+    ) {
+      return { ok: false, errorMessage: null };
+    }
+
+    const day = parseInt(dayInput.value);
+    const month = parseInt(monthInput.value);
+    const year = parseInt(yearInput.value);
+
+    if (!dayInput.isValid || !monthInput.isValid || !yearInput.isValid) {
+      return { ok: false, errorMessage: "Please enter a valid date" };
+    }
+
+    const date = spacetime(new Date(year, month - 1, day));
 
     if (!date.isValid())
       return { ok: false, errorMessage: "Please enter a valid date" };

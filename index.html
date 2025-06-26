@@ -29,12 +29,19 @@
           <div class="text-xl text-gray-300">
             Enter the date of a recent paycheck
           </div>
-          <input
-            x-mask="99/99/9999"
-            placeholder="MM/DD/YYYY"
-            x-model="dateInput"
-            class="w-full outline-2 outline-slate-500 px-2 py-1 rounded-sm focus:outline-indigo-400 bg-gray-900 text-white text-3xl"
-          />
+          <div class="flex items-center gap-4">
+            <template x-for="input in inputs">
+              <input
+                :placeholder="input.placeholder"
+                x-model="input.value"
+                type="number"
+                class="outline-2 outline-slate-500 px-2 py-1 rounded-sm focus:outline-indigo-400 bg-gray-900 text-white text-3xl"
+                :style="{width: input.width}"
+                :min="input.min"
+                :max="input.max"
+              />
+            </template>
+          </div>
         </label>
 
         <template x-if="!dateValidation.ok">
