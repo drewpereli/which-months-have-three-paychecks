@@ -39,6 +39,8 @@
                 :style="{width: input.width}"
                 :min="input.min"
                 :max="input.max"
+                x-init="input.el = $el"
+                @input="onInput(input.id)"
               />
             </template>
           </div>

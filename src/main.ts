@@ -17,6 +17,7 @@ type Input = {
   max?: number;
   width: string;
   isValid: boolean;
+  shouldJumpToNextInput: boolean;
 };
 
 const inputs: Input[] = [
@@ -33,6 +34,11 @@ const inputs: Input[] = [
       const month = parseInt(this.value);
       return !isNaN(month) && month >= 1 && month <= 12;
     },
+    get shouldJumpToNextInput() {
+      if (!this.value || !this.isValid) return false;
+
+      return parseInt(this.value) > 1; // If the user entered '1', they might be done, but might also be entering '11' or '12'
+    },
   },
   {
     id: "day",
@@ -47,6 +53,11 @@ const inputs: Input[] = [
       const day = parseInt(this.value);
       return !isNaN(day) && day >= 1 && day <= 31;
     },
+    get shouldJumpToNextInput() {
+      if (!this.value || !this.isValid) return false;
+
+      return parseInt(this.value) > 3; // If the user entered '2', they might be done, but might also be entering '20' or '21', so we only consider it done if the value is greater than 3.
+    },
   },
   {
     id: "year",
@@ -59,11 +70,26 @@ const inputs: Input[] = [
       const year = parseInt(this.value);
       return !isNaN(year);
     },
+    shouldJumpToNextInput: false,
   },
 ];
 
 Alpine.data("app", () => ({
   inputs,
+  onInput(currentInputId: string) {
+    const inputIdx = this.inputs.findIndex(
+      (input) => input.id === currentInputId,
+    );
+    const input = this.inputs[inputIdx];
+
+    if (!input?.shouldJumpToNextInput) return;
+
+    const nextInput = this.inputs[inputIdx + 1];
+
+    if (!nextInput?.el) return;
+
+    nextInput.el.focus();
+  },
   get dateValidation():
     | { ok: true; date: Spacetime }
     | { ok: false; errorMessage: string | null } {
